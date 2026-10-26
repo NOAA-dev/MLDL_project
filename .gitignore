@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+*.log
+nohup.out
+data/raw/
+data/processed_32/

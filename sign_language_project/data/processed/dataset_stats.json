@@ -100,8 +100,8 @@
       "space": 75
     }
   },
-  "train_pixel_mean": 0.5096567869186401,
-  "train_pixel_std": 0.22637559473514557,
+  "train_pixel_mean": 0.5081557631492615,
+  "train_pixel_std": 0.23330312967300415,
   "removed": {
     "corrupted": 0,
     "duplicates": 0,
