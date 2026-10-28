@@ -1,9 +1,3 @@
-"""Person 6: predict the sign in one image.
-
-Run from the project root:
-    python -m demo.predict_image path/to/image.jpg
-"""
-
 import argparse
 
 import numpy as np
@@ -14,7 +8,7 @@ from preprocessing.preprocess_images import preprocess_for_inference
 
 
 def predict_image(model, image, class_names, top_k=3):
-    """image: file path, PIL image or numpy array. Returns [(class_name, probability), ...] best first."""
+   
     img_size = model.cfg.input_shape[0]
     x = to_channels_last(preprocess_for_inference(image, img_size))
     probabilities = model.forward(x)[0]
@@ -25,7 +19,7 @@ def predict_image(model, image, class_names, top_k=3):
 def main():
     parser = argparse.ArgumentParser(description="Predict the sign in one image")
     parser.add_argument("image", help="path to an image file")
-    parser.add_argument("--checkpoint", default="experiments/model.npz")
+    parser.add_argument("--checkpoint", default="experiments/final/model.npz")
     parser.add_argument("--data_dir", default="data/processed")
     parser.add_argument("--top", type=int, default=3)
     args = parser.parse_args()

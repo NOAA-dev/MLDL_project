@@ -1,17 +1,11 @@
-"""Download the ASL Alphabet dataset and build data/processed/. Run from the project root:
-
-    python prepare_data.py
-    python prepare_data.py --raw_dir path/to/asl_alphabet_train     (skip the download)
-"""
-
 import argparse
 from pathlib import Path
 
-from preprocessing.preprocess_images import run_preprocessing
+from preprocessing.preprocess_images import run_preprocessing, IMG_SIZE
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--raw_dir", default=None, help="folder that directly contains A, B, ..., space")
-parser.add_argument("--img_size", type=int, default=32)
+parser.add_argument("--img_size", type=int, default=IMG_SIZE)
 parser.add_argument("--max_per_class", type=int, default=500)
 args = parser.parse_args()
 

@@ -1,5 +1,3 @@
-"""Person 6: figures for the report. Every function saves a PNG and does not open a window."""
-
 import matplotlib
 
 matplotlib.use("Agg")
@@ -9,14 +7,15 @@ import numpy as np
 from evaluation.confusion_matrix import normalize_rows
 
 
-def plot_history(history, path):
-    """Training and validation loss and accuracy per epoch."""
+def plot_history(history, path, test=None):
     epochs = range(1, len(history["train_loss"]) + 1)
     fig, (ax_loss, ax_acc) = plt.subplots(1, 2, figsize=(11, 4))
 
     ax_loss.plot(epochs, history["train_loss"], label="train")
     if "val_loss" in history:
         ax_loss.plot(epochs, history["val_loss"], label="validation")
+    if test is not None:
+        ax_loss.axhline(test["loss"], color="tab:red", linestyle="--", label="test (final)")
     ax_loss.set_title("Loss")
     ax_loss.set_xlabel("Epoch")
     ax_loss.legend()
@@ -24,6 +23,8 @@ def plot_history(history, path):
     ax_acc.plot(epochs, history["train_accuracy"], label="train")
     if "val_accuracy" in history:
         ax_acc.plot(epochs, history["val_accuracy"], label="validation")
+    if test is not None:
+        ax_acc.axhline(test["accuracy"], color="tab:red", linestyle="--", label="test (final)")
     ax_acc.set_title("Accuracy")
     ax_acc.set_xlabel("Epoch")
     ax_acc.legend()
@@ -34,7 +35,6 @@ def plot_history(history, path):
 
 
 def plot_confusion_matrix(cm, class_names, path, normalize=True):
-    """Heat map of the confusion matrix. Numbers are written in the cells only for small matrices."""
     values = normalize_rows(cm) if normalize else cm
     n = len(class_names)
     fig, ax = plt.subplots(figsize=(10, 9))
@@ -59,7 +59,6 @@ def plot_confusion_matrix(cm, class_names, path, normalize=True):
 
 
 def plot_class_f1(per_class, path):
-    """Horizontal bars of F1 per class, weakest class at the bottom."""
     ordered = sorted(per_class, key=lambda row: row["f1"], reverse=True)
     names = [row["class"] for row in ordered]
     scores = [row["f1"] for row in ordered]
@@ -75,7 +74,6 @@ def plot_class_f1(per_class, path):
 
 
 def plot_misclassified(X, y_true, y_pred, class_names, path, max_images=12):
-    """Grid of wrongly classified test images. X is (N, 1, H, W). Returns False if there are no mistakes."""
     wrong = np.where(np.asarray(y_true) != np.asarray(y_pred))[0][:max_images]
     if len(wrong) == 0:
         return False

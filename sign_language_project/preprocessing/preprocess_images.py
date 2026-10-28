@@ -1,14 +1,3 @@
-"""Person 1: raw ASL images -> cleaned, resized, split dataset on disk.
-
-Run from the project root:
-    python -m preprocessing.preprocess_images --raw_dir data/raw/asl_alphabet_train
-
-Output (in data/processed by default):
-    train.npz, val.npz, test.npz   X: uint8 (N, 1, H, W), y: int64 (N,)
-    classes.json                   fixed class-ID mapping
-    dataset_stats.json             counts, removed files, pixel statistics
-"""
-
 import argparse
 import hashlib
 import json
@@ -23,10 +12,9 @@ SEED = 42
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
 
 
-# ---------- single image ----------
+
 
 def preprocess_image(image, img_size=IMG_SIZE):
-    """PIL image -> uint8 array (img_size, img_size). Grayscale, centre-cropped to square, resized."""
     gray = image.convert("L")
     w, h = gray.size
     side = min(w, h)
@@ -38,10 +26,6 @@ def preprocess_image(image, img_size=IMG_SIZE):
 
 
 def preprocess_for_inference(image, img_size=IMG_SIZE):
-    """Path, PIL image or numpy array (H, W) / (H, W, 3) -> float32 (1, 1, img_size, img_size) in [0, 1].
-
-    Used by Person 6 for single-image prediction. Same pipeline as training data.
-    """
     if isinstance(image, (str, Path)):
         image = Image.open(image)
     elif isinstance(image, np.ndarray):
@@ -50,10 +34,8 @@ def preprocess_for_inference(image, img_size=IMG_SIZE):
     return (pixels.astype(np.float32) / 255.0).reshape(1, 1, img_size, img_size)
 
 
-# ---------- dataset scanning and cleaning ----------
 
 def find_class_names(raw_dir, class_names=None):
-    """Sorted class folder names. If class_names is given, check they all exist."""
     raw_dir = Path(raw_dir)
     if not raw_dir.is_dir():
         raise FileNotFoundError(f"Raw dataset folder not found: {raw_dir}")
@@ -69,11 +51,6 @@ def find_class_names(raw_dir, class_names=None):
 
 
 def load_clean_images(raw_dir, class_names, img_size=IMG_SIZE, max_per_class=None, seed=SEED):
-    """Load, validate and de-duplicate images class by class.
-
-    Returns X (N, H, W) uint8, y (N,) int64 and a report dict.
-    Duplicates are exact matches after grayscale + resize (checked across all classes).
-    """
     rng = np.random.default_rng(seed)
     raw_dir = Path(raw_dir)
     seen_hashes = set()
@@ -117,10 +94,8 @@ def load_clean_images(raw_dir, class_names, img_size=IMG_SIZE, max_per_class=Non
     return np.stack(images), np.array(labels, dtype=np.int64), report
 
 
-# ---------- split ----------
 
 def stratified_split(y, fractions=SPLIT_FRACTIONS, seed=SEED):
-    """Return {'train': idx, 'val': idx, 'test': idx}. Each class is split with the same fractions."""
     train_frac, val_frac, test_frac = fractions
     if abs(train_frac + val_frac + test_frac - 1.0) > 1e-6:
         raise ValueError("Split fractions must sum to 1")
@@ -142,7 +117,7 @@ def stratified_split(y, fractions=SPLIT_FRACTIONS, seed=SEED):
     return {name: rng.permutation(np.concatenate(parts)) for name, parts in split_idx.items()}
 
 
-# ---------- saving ----------
+
 
 def save_processed(out_dir, X, y, split_idx, class_names, img_size, report):
     out_dir = Path(out_dir)
@@ -189,7 +164,7 @@ def save_processed(out_dir, X, y, split_idx, class_names, img_size, report):
     return stats
 
 
-# ---------- main ----------
+
 
 def run_preprocessing(raw_dir, out_dir, img_size=IMG_SIZE, max_per_class=None,
                       class_names=None, fractions=SPLIT_FRACTIONS, seed=SEED):

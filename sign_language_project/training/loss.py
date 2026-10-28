@@ -1,4 +1,3 @@
-"""Numerically stable categorical cross-entropy for a softmax classifier."""
 import numpy as np
 
 
@@ -26,7 +25,6 @@ def _validate_probabilities_and_labels(y_pred, y_true):
 
 
 def cross_entropy_loss(y_pred, y_true, epsilon=1e-12):
-    """Return mean categorical cross-entropy; y_pred is (N,C), y_true is (N,)."""
     if not (0.0 < epsilon < 1.0):
         raise ValueError("epsilon must be between 0 and 1.")
     probabilities, labels = _validate_probabilities_and_labels(y_pred, y_true)
@@ -35,11 +33,6 @@ def cross_entropy_loss(y_pred, y_true, epsilon=1e-12):
 
 
 def cross_entropy_gradient(y_pred, y_true):
-    """Return dL/dlogits for mean softmax-cross-entropy, shape (N,C).
-
-    This is the combined softmax + cross-entropy gradient. Pass it directly
-    to the final Dense.backward(); do not apply a separate softmax backward.
-    """
     probabilities, labels = _validate_probabilities_and_labels(y_pred, y_true)
     grad = probabilities.copy()
     grad[np.arange(len(labels)), labels] -= 1.0

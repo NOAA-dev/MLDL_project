@@ -1,10 +1,3 @@
-"""Train the CNN on the processed ASL data and report test accuracy.
-
-Run from the project root:
-    python run_training.py --epochs 2          (quick check)
-    python run_training.py --epochs 10
-"""
-
 import argparse
 import json
 from pathlib import Path
@@ -26,7 +19,6 @@ parser.add_argument("--out_dir", default="experiments")
 args = parser.parse_args()
 
 
-# ---------- 1. data ----------
 info = load_class_info(args.data_dir)
 img_size = info["img_size"]
 X_train, y_train = load_split("train", args.data_dir)

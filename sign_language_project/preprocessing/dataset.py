@@ -1,10 +1,3 @@
-"""Person 1: dataset loading and batch generation.
-
-Conventions shared with the whole team:
-    X : float32, shape (N, 1, H, W), values in [0, 1]      (layout N, C, H, W)
-    y : int64,   shape (N,), values in 0 .. num_classes-1  (class IDs from classes.json)
-"""
-
 import json
 from pathlib import Path
 
@@ -15,16 +8,12 @@ from preprocessing.augment import augment_batch
 DEFAULT_PROCESSED_DIR = "data/processed"
 
 
-# ---------- loading ----------
-
 def load_class_info(processed_dir=DEFAULT_PROCESSED_DIR):
-    """Dict with class_names (list), class_to_id (dict), num_classes, img_size, channels."""
     with open(Path(processed_dir) / "classes.json") as f:
         return json.load(f)
 
 
 def load_split(split, processed_dir=DEFAULT_PROCESSED_DIR):
-    """Load 'train', 'val' or 'test'. Returns X float32 (N, 1, H, W) in [0, 1] and y int64 (N,)."""
     if split not in ("train", "val", "test"):
         raise ValueError(f"split must be 'train', 'val' or 'test', got '{split}'")
     data = np.load(Path(processed_dir) / f"{split}.npz")
@@ -34,25 +23,17 @@ def load_split(split, processed_dir=DEFAULT_PROCESSED_DIR):
 
 
 def one_hot(y, num_classes):
-    """int labels (N,) -> float32 one-hot matrix (N, num_classes)."""
     out = np.zeros((len(y), num_classes), dtype=np.float32)
     out[np.arange(len(y)), y] = 1.0
     return out
 
 def to_channels_last(X):
-    """(N, 1, H, W) -> (N, H, W, 1): the layout used by the CNN layers."""
     return np.ascontiguousarray(X.transpose(0, 2, 3, 1))
 
-# ---------- batches ----------
+
 
 def batch_generator(X, y, batch_size=32, shuffle=True, augment=False, seed=0, drop_last=False,
                     channels_last=False):
-    """Yield (X_batch, y_batch) once over the whole dataset (one epoch).
-
-    X_batch: float32 (B, 1, H, W), or (B, H, W, 1) if channels_last=True. y_batch: int64 (B,).
-    Same seed -> same order and same augmentation. Use seed=base_seed + epoch for a new order each epoch.
-    Use augment=True for training only.
-    """
     if len(X) != len(y):
         raise ValueError(f"X and y have different lengths: {len(X)} vs {len(y)}")
     rng = np.random.default_rng(seed)
@@ -76,10 +57,9 @@ def num_batches(n_samples, batch_size, drop_last=False):
     return (n_samples + batch_size - 1) // batch_size
 
 
-# ---------- checks and statistics ----------
+
 
 def check_batch(X_batch, y_batch, img_size, num_classes, channels_last=False):
-    """Raise AssertionError if a batch breaks the team's tensor contract."""
     assert X_batch.ndim == 4, f"X must be 4D, got {X_batch.shape}"
     expected = (img_size, img_size, 1) if channels_last else (1, img_size, img_size)
     assert X_batch.shape[1:] == expected, f"bad X shape {X_batch.shape}"

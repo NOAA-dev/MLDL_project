@@ -1,5 +1,3 @@
-"""Person 6: predictions, accuracy, precision / recall / F1 and inference time."""
-
 import time
 
 import numpy as np
@@ -10,7 +8,7 @@ from training.checkpoints import load_checkpoint
 
 
 def load_trained_model(checkpoint_path, class_info):
-    """Rebuild the CNN exactly as run_training.py does, then load the saved weights."""
+   
     img_size = class_info["img_size"]
     config = CNNConfig(input_shape=(img_size, img_size, 1), num_classes=class_info["num_classes"])
     model = CNN(config)
@@ -19,7 +17,7 @@ def load_trained_model(checkpoint_path, class_info):
 
 
 def predict_all(model, X, batch_size=64):
-    """X: (N, 1, H, W) from load_split. Returns class IDs (N,) and probabilities (N, num_classes)."""
+  
     X = to_channels_last(X)
     probabilities = []
     for start in range(0, len(X), batch_size):
@@ -36,11 +34,7 @@ def accuracy_score(y_true, y_pred):
 
 
 def class_report(cm, class_names):
-    """Per-class precision, recall, F1 and support from a confusion matrix (rows = true, columns = predicted).
-
-    Returns (per_class list of dicts, macro average dict, weighted average dict).
-    A class that is never predicted or never present gets 0 instead of a division error.
-    """
+   
     true_positive = np.diag(cm).astype(float)
     predicted_total = cm.sum(axis=0).astype(float)
     actual_total = cm.sum(axis=1).astype(float)
@@ -69,7 +63,7 @@ def class_report(cm, class_names):
 
 
 def measure_inference_time(model, X, n_single=50, batch_size=64):
-    """Average time to predict one image, and the per-image time inside a batch (milliseconds)."""
+   
     X = to_channels_last(X)
     n_single = min(n_single, len(X))
     model.forward(X[:1])

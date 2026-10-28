@@ -1,14 +1,7 @@
-"""Activation and shape-manipulation layers for the from-scratch sign-language CNN.
-
-Tensor convention: channels-last, NHWC for batches (N, H, W, C).
-Dense inputs use (N, features). Parameters and activations use float64 by default
-for stable numerical gradient checks; callers may pass float32 arrays if desired.
-"""
 import numpy as np
 
 
 class ReLU:
-    """Elementwise ReLU: f(x) = max(0, x)."""
 
     def __init__(self):
         self._input = None
@@ -33,7 +26,6 @@ class ReLU:
 
 
 class Flatten:
-    """Flatten each sample while preserving the batch dimension."""
 
     def __init__(self):
         self._input_shape = None

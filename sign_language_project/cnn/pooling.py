@@ -1,16 +1,8 @@
-"""Max-pooling layer implemented with NumPy only."""
 import numpy as np
 
 
 class MaxPool:
-    """2D max pooling for NHWC tensors.
-
-    Args:
-        pool_size: integer or (height, width), default 2.
-        stride: integer or (height, width); defaults to pool_size.
-    Padding is intentionally not implemented; pooling uses valid windows.
-    """
-
+    
     def __init__(self, pool_size=2, stride=None):
         self.pool_size = self._pair(pool_size, "pool_size")
         self.stride = self._pair(stride if stride is not None else pool_size, "stride")

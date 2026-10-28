@@ -1,10 +1,8 @@
-"""Person 6: confusion matrix and the most common mistakes."""
-
 import numpy as np
 
 
 def compute_confusion_matrix(y_true, y_pred, num_classes):
-    """Rows = true class, columns = predicted class. Returns an int matrix (num_classes, num_classes)."""
+   
     y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
     if y_true.shape != y_pred.shape:
         raise ValueError("y_true and y_pred must have the same shape.")
@@ -16,13 +14,13 @@ def compute_confusion_matrix(y_true, y_pred, num_classes):
 
 
 def normalize_rows(cm):
-    """Each row divided by its total, so a row shows the share of each class that went where."""
+    
     totals = cm.sum(axis=1, keepdims=True)
     return np.divide(cm, totals, out=np.zeros(cm.shape, dtype=float), where=totals > 0)
 
 
 def top_confusions(cm, class_names, top_n=10):
-    """The most frequent wrong predictions, largest first."""
+
     rows = []
     for true_id in range(cm.shape[0]):
         class_total = cm[true_id].sum()

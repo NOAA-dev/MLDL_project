@@ -1,18 +1,7 @@
-"""Fully connected layer implemented with NumPy only."""
 import numpy as np
 
 
 class Dense:
-    """Dense layer: output = input @ weights + bias.
-
-    Input: (batch_size, in_features)
-    Weights: (in_features, out_features)
-    Bias: (out_features,)
-    Output: (batch_size, out_features)
-
-    Gradients are averaged by the batch size only if the upstream gradient
-    already represents a batch-mean loss. This layer does not average gradients.
-    """
 
     def __init__(self, in_features, out_features, seed=42, weight_scale=None):
         if not isinstance(in_features, int) or not isinstance(out_features, int):
@@ -21,7 +10,7 @@ class Dense:
             raise ValueError("in_features and out_features must be positive.")
         rng = np.random.default_rng(seed)
         if weight_scale is None:
-            # Xavier/Glorot uniform initialization.
+    
             limit = np.sqrt(6.0 / (in_features + out_features))
         else:
             if weight_scale <= 0:
@@ -54,5 +43,4 @@ class Dense:
         return grad_output @ self.W.T
 
     def parameters(self):
-        """Return live parameter/gradient pairs for a simple optimizer."""
         return [(self.W, self.dW), (self.b, self.db)]

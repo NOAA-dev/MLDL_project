@@ -1,4 +1,3 @@
-"""Plain stochastic gradient descent for live (parameter, gradient) pairs."""
 import numpy as np
 
 
@@ -9,7 +8,6 @@ class SGD:
         self.learning_rate = float(learning_rate)
 
     def step(self, model):
-        """Update parameters in-place using model.parameters() -> [(param, grad)]."""
         if not hasattr(model, "parameters"):
             raise TypeError("model must provide parameters().")
         pairs = model.parameters()
@@ -30,8 +28,6 @@ class SGD:
             parameter -= self.learning_rate * gradient
 
 class SGDMomentum:
-    """SGD with momentum: velocity = momentum * velocity - lr * gradient; parameter += velocity."""
-
     def __init__(self, learning_rate=0.01, momentum=0.9):
         if not np.isfinite(learning_rate) or learning_rate <= 0:
             raise ValueError("learning_rate must be a finite positive number.")

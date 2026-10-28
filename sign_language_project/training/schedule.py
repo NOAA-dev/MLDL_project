@@ -1,4 +1,3 @@
-"""Learning-rate schedules: each is a callable epoch (0-based) -> learning rate."""
 import math
 
 
@@ -9,7 +8,6 @@ def _check(initial_lr):
 
 
 class StepDecay:
-    """lr = initial_lr * drop ** (epoch // every)."""
 
     def __init__(self, initial_lr, drop=0.5, every=10):
         if not 0 < drop < 1 or every < 1:
@@ -21,7 +19,6 @@ class StepDecay:
 
 
 class ExponentialDecay:
-    """lr = initial_lr * gamma ** epoch."""
 
     def __init__(self, initial_lr, gamma=0.95):
         if not 0 < gamma <= 1:
@@ -33,7 +30,6 @@ class ExponentialDecay:
 
 
 class CosineDecay:
-    """Cosine curve from initial_lr down to min_lr over total_epochs (then stays at min_lr)."""
 
     def __init__(self, initial_lr, total_epochs, min_lr=None):
         self.initial_lr = _check(initial_lr)

@@ -1,16 +1,8 @@
-"""Numerically stable softmax for class logits."""
 import numpy as np
 
 
 class Softmax:
-    """Softmax layer. This layer exposes probabilities but no standalone backward.
-
-    For cross-entropy training, the recommended output-logit gradient is
-    (probabilities - one_hot_targets) / batch_size and is then sent directly
-    into the preceding Dense.backward(). This combines softmax and cross-entropy
-    derivatives and avoids a redundant Jacobian calculation.
-    """
-
+   
     def forward(self, logits):
         logits = np.asarray(logits)
         if logits.ndim != 2:

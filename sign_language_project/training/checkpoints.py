@@ -1,11 +1,9 @@
-"""Safe NumPy checkpoint save/load without pickle."""
 import json
 from pathlib import Path
 import numpy as np
 
 
 def save_checkpoint(model, path, epoch=None, history=None):
-    """Save model parameters and optional JSON-serializable metadata to .npz."""
     pairs = model.parameters()
     arrays = {}
     shapes = []
@@ -23,7 +21,6 @@ def save_checkpoint(model, path, epoch=None, history=None):
 
 
 def load_checkpoint(model, path):
-    """Load parameters into an existing same-architecture model; return metadata."""
     pairs = model.parameters()
     with np.load(Path(path), allow_pickle=False) as checkpoint:
         metadata = json.loads(str(checkpoint["metadata_json"].item()))

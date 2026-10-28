@@ -1,13 +1,3 @@
-"""Person 2: 2D convolution layer implemented from scratch with NumPy.
-
-Channels-last layout (NHWC), matching Person 3's layers and Person 4's model:
-    input  x   : (N, H, W, C_in)
-    weights W  : (k, k, C_in, C_out)
-    bias b     : (C_out,)
-    output     : (N, H_out, W_out, C_out)
-    H_out = (H + 2 * padding - k) // stride + 1   (same formula for the width)
-"""
-
 import numpy as np
 
 
@@ -22,8 +12,6 @@ class Conv2D:
         self.stride = stride
         self.padding = padding
 
-        # He initialization: std = sqrt(2 / fan_in).
-        # seed=None draws from np.random, so np.random.seed() in the model makes it reproducible.
         fan_in = kernel_size * kernel_size * in_channels
         weight_shape = (kernel_size, kernel_size, in_channels, out_channels)
         if seed is None:
@@ -38,7 +26,7 @@ class Conv2D:
 
         self.cache = None
 
-    # same names as the mock Conv2D used in Person 4's tests
+   
     @property
     def kernels(self):
         return self.W
@@ -56,7 +44,7 @@ class Conv2D:
         return self.db
 
     def parameters(self):
-        """[(W, dW), (b, db)]: live arrays, so an in-place update (p -= lr * g) changes the layer."""
+       
         return [(self.W, self.dW), (self.b, self.db)]
 
     def output_size(self, height, width):
@@ -106,12 +94,9 @@ class Conv2D:
         grad_out = grad_out.astype(self.W.dtype, copy=False)
         grad_2d = grad_out.reshape(n * out_h * out_w, self.out_channels)
 
-        # gradients are written into the existing arrays, so references from parameters() stay valid;
-        # each call overwrites the previous gradients (no accumulation)
         self.db[...] = grad_2d.sum(axis=0)
         self.dW[...] = (cols_2d.T @ grad_2d).reshape(self.W.shape)
 
-        # gradient of the input: send each row's gradient back onto its patch
         w_2d = self.W.reshape(k * k * c, self.out_channels)
         dcols = (grad_2d @ w_2d.T).reshape(n, out_h, out_w, k, k, c)
 

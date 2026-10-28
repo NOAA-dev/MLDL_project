@@ -1,4 +1,3 @@
-"""Mini-batch training loop for the team's NumPy CNN."""
 import numpy as np
 from .loss import cross_entropy_loss
 from .backward import backward
@@ -6,7 +5,6 @@ from .optimizer import SGD
 
 
 def _batch_source(source):
-    """A callable supplies a fresh iterable per epoch; sequences can be reused."""
     return source() if callable(source) else source
 
 
@@ -29,7 +27,6 @@ def _validate_batch(X, y, model):
 
 
 def evaluate(model, batches):
-    """Return sample-weighted loss and accuracy for an iterable of (X_batch,y_batch)."""
     total_loss, total_correct, total_samples = 0.0, 0, 0
     for X, y in _batch_source(batches):
         X, y = _validate_batch(X, y, model)
@@ -45,14 +42,6 @@ def evaluate(model, batches):
 
 def train(model, train_batches, val_batches=None, epochs=30, learning_rate=0.01,
           optimizer=None, checkpoint_path=None, verbose=True, lr_schedule=None):
-    """Train from batches (X_batch,y_batch); callable sources are refreshed each epoch.
-
-    Returns a history dict with train_loss/train_accuracy and, when supplied,
-    val_loss/val_accuracy (and learning_rate per epoch when lr_schedule is given).
-    lr_schedule: optional callable epoch (0-based) -> learning rate, e.g. training.schedule.StepDecay;
-    it overrides optimizer.learning_rate at the start of every epoch.
-    The caller remains responsible for dataset splitting.
-    """
     if not isinstance(epochs, int) or epochs <= 0:
         raise ValueError("epochs must be a positive integer.")
     optimizer = optimizer or SGD(learning_rate)

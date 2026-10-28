@@ -12,4 +12,4 @@ Run everything from the project root.
     python -m preprocessing.preprocess_images --raw_dir data/raw/asl_alphabet_train --max_per_class 500
     python -m preprocessing.dataset            # prints split statistics
 
-Team data contract: X is float32 (N, 1, 32, 32) in [0, 1], y is int64 (N,), class IDs come from data/processed/classes.json.
+Team data contract: X is float32 (N, 1, 64, 64) in [0, 1], y is int64 (N,), class IDs come from data/processed/classes.json.
